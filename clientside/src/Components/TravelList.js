@@ -7,6 +7,8 @@ import Filter from './Filter';
 export default function TravelListPage() {
   const [destinations, setDestinations] = useState([]);
   const [query, setQuery] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
 
   useEffect(() => {
     fetchDestinations();
@@ -23,7 +25,6 @@ export default function TravelListPage() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this destination?")) return;
-
     try {
       await axios.delete(`http://localhost:5000/destinations/${id}`);
       setDestinations(destinations.filter(dest => dest.id !== id));
@@ -32,15 +33,33 @@ export default function TravelListPage() {
     }
   };
 
-  const filteredDestinations = destinations.filter(dest =>
-    dest.name.toLowerCase().includes(query.toLowerCase()) ||
-    dest.country.toLowerCase().includes(query.toLowerCase())
-  );
+  // Final filtering logic
+  const filteredDestinations = destinations.filter(dest => {
+    const matchesQuery =
+      dest.name.toLowerCase().includes(query.toLowerCase()) ||
+      dest.country.toLowerCase().includes(query.toLowerCase());
+
+    const matchesYear = selectedYear
+      ? new Date(dest.visit_date).getFullYear().toString() === selectedYear
+      : true;
+
+    const matchesCountry = selectedCountry
+      ? dest.country === selectedCountry
+      : true;
+
+    return matchesQuery && matchesYear && matchesCountry;
+  });
 
   return (
     <div>
       <SearchBar query={query} onQueryChange={setQuery} />
-      <Filter/>
+      <Filter
+        destinations={destinations}
+        selectedYear={selectedYear}
+        setSelectedYear={setSelectedYear}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
+      />
       <div className="p-6 max-w-4xl mx-auto">
         {filteredDestinations.length === 0 ? (
           <p className="text-gray-500">No destinations found.</p>
