@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import '../output.css';
+import '../output.css';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -80,6 +80,10 @@ const DestinationDetail = () => {
         .catch(err => console.error('Delete failed:', err));
     }
   };
+  const handleEdit = () => {
+    alert('Are you sure you want to edit this destination?')
+      
+  }
 
   if (!destination) return <div className="text-center py-10">Destination deleted or not found.</div>;
 
@@ -139,15 +143,22 @@ const DestinationDetail = () => {
             )}
           </div>
 
-          <div className="flex justify-end mt-6 space-x-4">
-            <button
-              className="text-red-600 hover:text-red-800 font-medium"
-              onClick={handleDelete}
-            >
-              Delete Destination
-            </button>
-          </div>
-          
+       <div className="flex justify-start mt-6 space-x-4">
+  <button
+    className="text-red-600 hover:text-red-800 font-medium"
+    onClick={handleEdit}
+  >
+    Edit Destination
+  </button>
+  <button
+    className="text-red-600 hover:text-red-800 font-medium"
+    onClick={handleDelete}
+  >
+    Delete Destination
+  </button>
+</div>
+
+
         </div>
       </div>
     </div>
