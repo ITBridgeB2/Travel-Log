@@ -13,7 +13,7 @@ L.Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
- 
+
 const DestinationDetail = () => {
   const id = 1; // Static ID for now
   const navigate = useNavigate();
@@ -28,11 +28,10 @@ const DestinationDetail = () => {
 
     axios.get(`http://localhost:5000/api/destinations/${id}`)
       .then(res => {
-        const dest = res.data;
+        const dest = res.data.data;
         setDestination(dest);
         setRating(dest.rating || 3);
 
-        // Fetch coordinates for the country
         if (dest.country) {
           axios.get('https://nominatim.openstreetmap.org/search', {
             params: {
@@ -80,10 +79,10 @@ const DestinationDetail = () => {
         .catch(err => console.error('Delete failed:', err));
     }
   };
+
   const handleEdit = () => {
-    alert('Are you sure you want to edit this destination?')
-      
-  }
+    navigate(`/edit/${id}`);
+  };
 
   if (!destination) return <div className="text-center py-10">Destination deleted or not found.</div>;
 
@@ -95,7 +94,7 @@ const DestinationDetail = () => {
 
           <div className="text-gray-700 space-y-2">
             <p><span className="font-semibold">Country:</span> {destination.country}</p>
-            <p><span className="font-semibold">Visit Date:</span> {destination.visit_date}</p>
+            <p><span className="font-semibold">Visit Date:</span>{' '}{new Date(destination.visit_date).toLocaleDateString()}</p>
             <p><span className="font-semibold">Notes:</span> {destination.notes}</p>
           </div>
 
@@ -143,22 +142,31 @@ const DestinationDetail = () => {
             )}
           </div>
 
-       <div className="flex justify-start mt-6 space-x-4">
-  <button
-    className="text-red-600 hover:text-red-800 font-medium"
-    onClick={handleEdit}
-  >
-    Edit Destination
-  </button>
-  <button
-    className="text-red-600 hover:text-red-800 font-medium"
-    onClick={handleDelete}
-  >
-    Delete Destination
-  </button>
-</div>
+          {/* Edit and Delete Buttons */}
+          <div className="flex justify-start mt-6 space-x-4">
+            <button
+              className="text-green-600 hover:text-green-800 font-medium"
+              onClick={handleEdit}
+            >
+              Edit Destination
+            </button>
+            <button
+              className="text-red-600 hover:text-red-800 font-medium"
+              onClick={handleDelete}
+            >
+              Delete Destination
+            </button>
+          </div>
 
-
+          {/* Centered Back Button */}
+          <div className="mt-8 flex justify-center">
+            <button
+              className="text-green-600 hover:text-red-800 font-medium"
+              onClick={() => navigate('/')}
+            >
+              Back to Destinations
+            </button>
+          </div>
         </div>
       </div>
     </div>

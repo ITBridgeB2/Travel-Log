@@ -28,64 +28,44 @@ db.connect(err => {
 
 app.get('/api/destinations/:id', (req, res) => {
   const { id } = req.params;
+
   db.query('SELECT * FROM destinations WHERE id = ?', [id], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Database error' });
-    if (results.length === 0) return res.status(404).json({ error: 'Not found' });
-    res.json(results[0]);
-  });
-});
+    if (err) return res.status(500).json({ success: false, error: err.message });
 
-app.delete('/api/destinations/:id', (req, res) => {
-  const { id } = req.params;
-  db.query('DELETE FROM destinations WHERE id = ?', [id], (err, result) => {
-    if (err) return res.status(500).json({ error: 'Database error' });
-    if (result.affectedRows === 0) return res.status(404).json({ error: 'Not found' });
-    res.json({ message: 'Deleted successfully' });
-  });
-});
-
-app.get('/api/geocode', async (req, res) => {
-  const { address } = req.query;
-
-  if (!address) {
-    return res.status(400).json({ error: 'Address required' });
-  }
-
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-
-  if (!apiKey) {
-    return res.status(500).json({ error: 'Missing Google Maps API key in environment' });
-  }
-
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-
-  try {
-    const response = await axios.get(url);
-    const results = response.data.results;
-
-    if (!results || results.length === 0) {
-      return res.status(404).json({ error: 'Location not found' });
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, error: 'Destination not found' });
     }
 
-    const { lat, lng } = results[0].geometry.location;
-    res.json({ lat, lng });
-  } catch (error) {
-    console.error('Geocoding error:', error.message);
-    res.status(500).json({ error: 'Geocoding request failed' });
-  }
-});
-                                                      
-
-app.patch('/api/destinations/:id', (req, res) => {
-  const { id } = req.params;
-  const { rating } = req.body;
-  const sql = 'UPDATE destinations SET rating = ? WHERE id = ?';
-  db.query(sql, [rating, id], (err, result) => {
-    if (err) return res.status(500).send('Update failed');
-    res.send({ message: 'Rating updated' });
+    res.status(200).json({ success: true, data: results[0] });
   });
 });
 
+app.put('/api/destinations/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, country, visit_date, notes } = req.body;
+
+  if (!name || !country || !visit_date) {
+    return res.status(400).json({ success: false, error: 'Missing required fields' });
+  }
+
+  const updateQuery = `
+    UPDATE destinations 
+    SET name = ?, country = ?, visit_date = ?, notes = ? 
+    WHERE id = ?
+  `;
+
+  db.query(updateQuery, [name, country, visit_date, notes, id], (err, result) => {
+    if (err) return res.status(500).json({ success: false, error: err.message });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: 'Destination not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Destination updated successfully' });
+  });
+});
+
+// Other routes...
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
