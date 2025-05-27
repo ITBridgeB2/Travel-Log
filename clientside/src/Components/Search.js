@@ -46,50 +46,47 @@ export default function SearchBar({ query, onQueryChange }) {
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto mt-6">
-  <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
-    Search Destinations
-  </label>
-  <input
-    id="search"
-    type="text"
-    className="w-full px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-    placeholder="Search by name or country..."
-    value={query}
-    onChange={(e) => {
-      onQueryChange(e.target.value);
-      setFocusedIndex(-1);
-    }}
-    onKeyDown={handleKeyDown}
-    aria-autocomplete="list"
-    aria-controls="suggestions-list"
-    aria-activedescendant={focusedIndex >= 0 ? `suggestion-${focusedIndex}` : undefined}
-  />
+    <div className="w-full md:w-1/2 relative">
+      
+      <input
+        id="search"
+        type="text"
+        className="w-full px-4 py-2 rounded-xl border border-teal-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-white"
+        placeholder="Search by name or country..."
+        value={query}
+        onChange={(e) => {
+          onQueryChange(e.target.value);
+          setFocusedIndex(-1);
+        }}
+        onKeyDown={handleKeyDown}
+        aria-autocomplete="list"
+        aria-controls="suggestions-list"
+        aria-activedescendant={focusedIndex >= 0 ? `suggestion-${focusedIndex}` : undefined}
+      />
 
-  {suggestions.length > 0 && (
-    <ul
-      id="suggestions-list"
-      className="absolute z-20 w-full bg-white border border-gray-300 mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto"
-      role="listbox"
-      ref={listRef}
-    >
-      {suggestions.map((item, index) => (
-        <li
-          key={item.id}
-          id={`suggestion-${index}`}
-          role="option"
-          aria-selected={focusedIndex === index}
-          className={`px-4 py-2 cursor-pointer ${
-            focusedIndex === index ? 'bg-teal-500 text-white' : 'hover:bg-teal-100'
-          }`}
-          onMouseDown={() => handleSuggestionClick(item)}
+      {suggestions.length > 0 && (
+        <ul
+          id="suggestions-list"
+          className="absolute z-20 w-full bg-white border border-gray-300 mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+          role="listbox"
+          ref={listRef}
         >
-          {item.name}, {item.country}
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
-
+          {suggestions.map((item, index) => (
+            <li
+              key={item.id}
+              id={`suggestion-${index}`}
+              role="option"
+              aria-selected={focusedIndex === index}
+              className={`px-4 py-2 cursor-pointer ${
+                focusedIndex === index ? 'bg-teal-500 text-white' : 'hover:bg-teal-100'
+              }`}
+              onMouseDown={() => handleSuggestionClick(item)}
+            >
+              {item.name}, {item.country}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

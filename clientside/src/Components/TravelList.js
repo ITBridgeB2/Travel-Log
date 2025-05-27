@@ -55,56 +55,95 @@ export default function TravelListPage() {
     return matchesQuery && matchesYear && matchesCountry;
   });
 
-  return (
-    <div>
-      <SearchBar query={query} onQueryChange={setQuery} />
-      <Filter
-        destinations={destinations}
-        selectedYear={selectedYear}
-        setSelectedYear={setSelectedYear}
-        selectedCountry={selectedCountry}
-        setSelectedCountry={setSelectedCountry}
-      />
-      <div className="p-6 max-w-4xl mx-auto">
-        {filteredDestinations.length === 0 ? (
-          <p className="text-gray-500">No destinations found.</p>
-        ) : (
-        <ul className="space-y-4">
-  {filteredDestinations.map((dest) => (
-    <li
-      key={dest.id}
-      className="bg-white rounded-xl shadow p-4 hover:shadow-md transition flex justify-between items-start"
-    >
-      <Link
-        to={`/destinations/${dest.id}`}
-        className="flex-1 cursor-pointer"
-      >
-        <h2 className="text-teal-600 font-semibold text-lg hover:underline">
-          {dest.name}
-        </h2>
-        <p className="text-gray-600">Country: {dest.country}</p>
-        <p className="text-gray-600">
-          Date: {new Date(dest.visit_date).toISOString().split("T")[0]}
-        </p>
-      </Link>
+ return (
+  <div>
+    {/* Search + Filter Layout Container */}
+    <div className="bg-teal-100 p-6 rounded-xl shadow-md max-w-6xl mx-auto mt-6 mb-8 border border-teal-300">
+      <div className="flex flex-wrap md:flex-nowrap gap-4">
+        {/* SearchBar - 50% width */}
+        <div className="w-full md:w-1/2">
+          <SearchBar query={query} onQueryChange={setQuery} />
+        </div>
 
-      <button
-        className="text-red-500 hover:underline text-sm ml-4"
-        onClick={(e) => {
-          e.stopPropagation(); // prevent navigation
-          e.preventDefault(); // prevent Link default
-          handleDelete(dest.id);
-        }}
-      >
-        Delete
-      </button>
-    </li>
-  ))}
-</ul>
+        {/* Country Filter - 25% width */}
+        <div className="w-full md:w-1/4">
+          <div className="flex flex-col">
+           
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="px-4 py-2 border border-teal-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              <option value="">All Countries</option>
+              {[...new Set(destinations.map(d => d.country))].sort().map(country => (
+                <option key={country} value={country}>{country}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-
-        )}
+        {/* Year Filter - 25% width */}
+        <div className="w-full md:w-1/4">
+          <div className="flex flex-col">
+            
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="px-4 py-2 border border-teal-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              <option value="">All Years</option>
+              {[...new Set(destinations.map(d => new Date(d.visit_date).getFullYear()))]
+                .sort((a, b) => b - a)
+                .map(year => (
+                  <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
     </div>
-  );
+
+    {/* Destination List */}
+    <div className="p-6 max-w-4xl mx-auto">
+      {filteredDestinations.length === 0 ? (
+        <p className="text-gray-500">No destinations found.</p>
+      ) : (
+        <ul className="space-y-4">
+          {filteredDestinations.map((dest) => (
+            <li
+              key={dest.id}
+              className="bg-white rounded-xl border-l-4 border-teal-500 shadow p-4 hover:shadow-lg transition flex justify-between items-start"
+            >
+              <Link
+                to={`/destinations/${dest.id}`}
+                className="flex-1 cursor-pointer"
+              >
+                <h2 className="text-teal-600 font-semibold text-lg hover:underline">
+                  {dest.name}
+                </h2>
+                <p className="text-gray-700">Country: {dest.country}</p>
+                <p className="text-gray-700">
+                  Date: {new Date(dest.visit_date).toISOString().split("T")[0]}
+                </p>
+              </Link>
+
+              <button
+                className="text-red-500 hover:text-red-600 text-sm ml-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleDelete(dest.id);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+);
+
+
 }

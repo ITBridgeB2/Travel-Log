@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-
 const Filter = ({
   destinations,
   selectedYear,
@@ -25,42 +24,39 @@ const Filter = ({
   }, [destinations]);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-  <h2 className="text-3xl font-semibold text-center text-teal-700 mb-4">
-    Filter Your Travel Logs
-  </h2>
+    <div className="w-full bg-teal-500 py-6 px-4">
+      <div className="max-w-7xl mx-auto flex flex-wrap md:flex-nowrap gap-4">
+        {/* Filter by Country (25%) */}
+        <div className="w-full md:w-1/4">
+         
+          <select
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            className="w-full px-4 py-2 rounded-xl border border-teal-300 focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            <option value="">All Countries</option>
+            {countries.map((country) => (
+              <option key={country} value={country}>{country}</option>
+            ))}
+          </select>
+        </div>
 
-  <div className="flex flex-wrap justify-center gap-6 bg-white p-6 shadow-lg rounded-2xl border border-teal-100">
-    <div className="flex flex-col items-start">
-      <label className="text-sm font-medium text-gray-600 mb-1">Year</label>
-      <select
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
-        className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
-      >
-        <option value="">All Years</option>
-        {years.map((year) => (
-          <option key={year} value={year}>{year}</option>
-        ))}
-      </select>
+        {/* Filter by Year (25%) */}
+        <div className="w-full md:w-1/4">
+          
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="w-full px-4 py-2 rounded-xl border border-teal-300 focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            <option value="">All Years</option>
+            {years.map((year) => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+      </div>
     </div>
-
-    <div className="flex flex-col items-start">
-      <label className="text-sm font-medium text-gray-600 mb-1">Country</label>
-      <select
-        value={selectedCountry}
-        onChange={(e) => setSelectedCountry(e.target.value)}
-        className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
-      >
-        <option value="">All Countries</option>
-        {countries.map((country) => (
-          <option key={country} value={country}>{country}</option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
-
   );
 };
 
